@@ -5,14 +5,14 @@
 
 using namespace std;
 
-struct NODE {
+struct MOVIEINFO{
     string name;
     string languages;   
     string releaseDate;
     string streamingUntil;
 
-    NODE* prev;
-    NODE* next;
+    MOVIEINFO* prev;
+    MOVIEINFO* next;
 };
 
 void freeList();
@@ -21,7 +21,7 @@ void addNote(const string& name, const string& languages, const string& releaseD
 
 void display();
 
-void deleteNode(NODE* current);
+void deleteNode(MOVIEINFO* current);
 
 void upcomingMovies();
 
@@ -31,13 +31,13 @@ void sortByReleaseDate();
 
 void interactiveView(); // This is declared in ScheduleProgrammeHeader.h to avoid circular dependency
 
-void swapData(NODE* a, NODE* b);
+void swapData(MOVIEINFO* a, MOVIEINFO* b);
 
-NODE* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil);
+MOVIEINFO* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil);
 
-bool isCurrentlyStreaming(NODE * m, const string & currentDate);
+bool isCurrentlyStreaming(MOVIEINFO * m, const string & currentDate);
 
-void updateNode(NODE * node);
+void updateNode(MOVIEINFO * node);
 
 string getCurrentDate();
 

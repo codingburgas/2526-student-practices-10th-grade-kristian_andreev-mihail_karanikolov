@@ -26,29 +26,3 @@ int main() {
     freeList();
 }
 
-
-//int main()
-//{
-//    
-//    int choice;
-//    cin >> choice;
-//
-//    cout << "1-News" << endl << "2-Schedule" << endl << "3-Up and Coming" << "anything else - end"; //the whole menu is a placeholder to establish a connection between the files
-//
-//        switch (choice) { //placeholder
-//
-//        case 1:
-//            RelatedNewsF();
-//            break;
-//        case 2:
-//            ScheduleProgrammeF();
-//            break;
-//        case 3:
-//            UpcomingMoviesF();
-//            break;
-//        default:
-//            return 0;
-//
-//        }
-//
-//}

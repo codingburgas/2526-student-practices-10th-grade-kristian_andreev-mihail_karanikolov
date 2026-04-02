@@ -8,16 +8,16 @@ using namespace std;
 
 
 // ================= GLOBAL POINTERS =================
-NODE* head = nullptr;
-NODE* tail = nullptr;
+MOVIEINFO* head = nullptr;
+MOVIEINFO* tail = nullptr;
 
 // ================= CORE METHODS =================
-NODE* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
-    return new NODE{ name, languages, releaseDate, streamingUntil, nullptr, nullptr };
+MOVIEINFO* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
+    return new MOVIEINFO{ name, languages, releaseDate, streamingUntil, nullptr, nullptr };
 }
 
 void addNote(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
-    NODE* n = createNode(name, languages, releaseDate, streamingUntil);
+    MOVIEINFO* n = createNode(name, languages, releaseDate, streamingUntil);
 
     if (!head) head = tail = n;
     else {
@@ -29,7 +29,7 @@ void addNote(const string& name, const string& languages, const string& releaseD
 
 // ================= DISPLAY =================
 void display() {
-    NODE* temp = head;
+    MOVIEINFO* temp = head;
     while (temp) {
         cout << "Name: " << temp->name
             << " | Languages: " << temp->languages
@@ -40,7 +40,7 @@ void display() {
 }
 
 // ================= SORTING =================
-void swapData(NODE* a, NODE* b) {
+void swapData(MOVIEINFO* a, MOVIEINFO* b) {
     swap(a->name, b->name);
     swap(a->languages, b->languages);
     swap(a->releaseDate, b->releaseDate);
@@ -48,15 +48,15 @@ void swapData(NODE* a, NODE* b) {
 }
 
 void sortByName() {
-    for (NODE* i = head; i; i = i->next)
-        for (NODE* j = i->next; j; j = j->next)
+    for (MOVIEINFO* i = head; i; i = i->next)
+        for (MOVIEINFO* j = i->next; j; j = j->next)
             if (i->name > j->name)
                 swapData(i, j);
 }
 
 void sortByReleaseDate() {
-    for (NODE* i = head; i; i = i->next)
-        for (NODE* j = i->next; j; j = j->next)
+    for (MOVIEINFO* i = head; i; i = i->next)
+        for (MOVIEINFO* j = i->next; j; j = j->next)
             if (i->releaseDate > j->releaseDate)
                 swapData(i, j);
 }
@@ -72,7 +72,7 @@ string getCurrentDate() {
     return string(buf);
 }
 
-bool isCurrentlyStreaming(NODE* m, const string& currentDate) {
+bool isCurrentlyStreaming(MOVIEINFO* m, const string& currentDate) {
     return (m->releaseDate <= currentDate && m->streamingUntil >= currentDate);
 }
 
@@ -80,7 +80,7 @@ void upcomingMovies() {
     string currentDate = getCurrentDate();
 
     cout << "Upcoming Movies:\n";
-    NODE* temp = head;
+    MOVIEINFO* temp = head;
 
     while (temp) {
         if (temp->releaseDate > currentDate) {
@@ -94,7 +94,7 @@ void currentlyStreaming() {
     string currentDate = getCurrentDate();
 
     cout << "Currently Streaming:\n";
-    NODE* temp = head;
+    MOVIEINFO* temp = head;
 
     while (temp) {
         if (isCurrentlyStreaming(temp, currentDate)) {
@@ -105,7 +105,7 @@ void currentlyStreaming() {
 }
 
 // ================= MODIFY / DELETE =================
-void updateNode(NODE* node) {
+void updateNode(MOVIEINFO* node) {
     if (!node) return;
 
     cout << "New name: "; getline(cin, node->name);
@@ -114,7 +114,7 @@ void updateNode(NODE* node) {
     cout << "New streaming until: "; getline(cin, node->streamingUntil);
 }
 
-void deleteNode(NODE* current) {
+void deleteNode(MOVIEINFO* current) {
     if (!current) return;
 
     if (current == head) {
@@ -135,7 +135,7 @@ void deleteNode(NODE* current) {
 
 // ================= INTERACTIVE =================
 void interactiveView() {
-    NODE* temp = head;
+    MOVIEINFO* temp = head;
 
     while (temp) {
         cout << "\n----------------------\n";
@@ -152,7 +152,7 @@ void interactiveView() {
 
         if (choice == 1) temp = temp->next;
         else if (choice == 2) {
-            NODE* toDelete = temp;
+            MOVIEINFO* toDelete = temp;
             temp = temp->next;
             deleteNode(toDelete);
         }
@@ -163,10 +163,18 @@ void interactiveView() {
 
 // ================= CLEANUP =================
 void freeList() {
-    NODE* cur = head;
+    MOVIEINFO* cur = head;
     while (cur) {
-        NODE* t = cur;
+        MOVIEINFO* t = cur;
         cur = cur->next;
         delete t;
     }
+}
+
+
+//========SAVE============
+void SaveMovieData() {
+
+
+
 }
