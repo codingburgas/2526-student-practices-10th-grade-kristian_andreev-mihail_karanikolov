@@ -2,6 +2,7 @@
 #include <string>
 #include <ctime>
 #include <cstdio>
+#include "raylib.h"
 
 using namespace std;
 
@@ -13,6 +14,16 @@ struct MOVIEINFO{
 
     MOVIEINFO* prev;
     MOVIEINFO* next;
+};
+
+struct SEATDETAILS {
+
+    int state;      // 0 = available, 1 = selected, 2 = taken
+    Rectangle rect; // position and size
+
+    int row;
+    int col;
+
 };
 
 void freeList();

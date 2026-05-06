@@ -3,6 +3,8 @@
 #include <ctime>
 #include <cstdio>
 #include "MovieManagement.h"   
+#include "raylib.h"
+
 
 using namespace std;
 
@@ -15,6 +17,7 @@ MOVIEINFO* tail = nullptr;
 MOVIEINFO* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
     return new MOVIEINFO{ name, languages, releaseDate, streamingUntil, nullptr, nullptr };
 }
+
 
 void addNote(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
     MOVIEINFO* n = createNode(name, languages, releaseDate, streamingUntil);

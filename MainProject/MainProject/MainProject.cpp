@@ -3,6 +3,8 @@
 #include "ScheduleProgrammeHeader.h"
 #include "MainHeader.h"
 #include "..\MovieManagement\MovieManagement.h"
+#include "TheatreSeatsReservationHeader.h"
+
 
 using namespace std;
 
@@ -12,17 +14,35 @@ int main() {
     addNote("Dune", "English", "2021-10-22", "2027-01-01");
 
     cout << "Choose order:\n";
-    cout << "1. Alphabetical\n2. Release Date\n";
+    cout << "1. Alphabetical\n2. Release Date\n3.Seat Reservation";
 
     int choice;
     cin >> choice;
     cin.ignore();
 
-    if (choice == 1) sortByName();
-    else sortByReleaseDate();
+    switch(choice){
+    case 1:
+        sortByName();
+        interactiveView();
 
-    interactiveView();
+        freeList();
+        break;
 
-    freeList();
+    case 2:
+        sortByReleaseDate();
+        interactiveView();
+
+        freeList();
+        break;
+
+    case 3:
+        TheatreSeatReservationFunc();
+        break;
+    
+    }
+
+    
+
+    
 }
 

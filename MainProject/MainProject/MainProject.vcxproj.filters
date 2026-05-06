@@ -24,6 +24,9 @@
     <ClCompile Include="RelatedNews.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TheatreSeatsReservation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RelatedNewsHeader.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MainHeader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TheatreSeatsReservationHeader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
