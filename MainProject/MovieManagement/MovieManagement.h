@@ -52,3 +52,18 @@ void updateNode(MOVIEINFO * node);
 
 string getCurrentDate();
 
+
+MOVIEINFO* findMovieByName(const string& name);
+
+void movieMenu();
+
+void reserveMovieSeats();
+
+
+void TheatreSeatReservationFunc();
+
+void saveMoviesToFile();
+
+void loadMoviesFromFile();
+
+void rewriteMoviesFile();
