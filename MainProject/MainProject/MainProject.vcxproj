@@ -129,6 +129,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AccountManager.cpp" />
     <ClCompile Include="MainProject.cpp" />
     <ClCompile Include="RelatedNews.cpp" />
     <ClCompile Include="ScheduleProgramme.cpp" />

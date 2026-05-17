@@ -3,6 +3,7 @@
 #include <ctime>
 #include <cstdio>
 #include "MovieManagement.h"   
+#include "AccountManager.h"
 #include "raylib.h"
 #include <fstream>
 #include <sstream>
@@ -231,6 +232,8 @@ void movieMenu() {
 
     do {
 
+        accManager.displayUserBanner();
+
         cout << "\n===== MOVIE MANAGEMENT =====\n";
         cout << "1. Add Movie\n";
         cout << "2. Display Movies\n";
@@ -245,7 +248,13 @@ void movieMenu() {
         cin >> choice;
         cin.ignore();
 
+        // ADD MOVIE
         if (choice == 1) {
+
+            if (!accManager.isAdmin()) {
+                cout << "Admin only.\n";
+                continue;
+            }
 
             string name, lang, release, until;
 
@@ -266,12 +275,18 @@ void movieMenu() {
             cout << "Movie added successfully!\n";
         }
 
+        // DISPLAY
         else if (choice == 2) {
-
             display();
         }
 
+        // EDIT MOVIE
         else if (choice == 3) {
+
+            if (!accManager.isAdmin()) {
+                cout << "Admin only.\n";
+                continue;
+            }
 
             string name;
 
@@ -289,7 +304,13 @@ void movieMenu() {
             }
         }
 
+        // DELETE MOVIE
         else if (choice == 4) {
+
+            if (!accManager.isAdmin()) {
+                cout << "Admin only.\n";
+                continue;
+            }
 
             string name;
 
@@ -307,28 +328,25 @@ void movieMenu() {
             }
         }
 
+        // SORT NAME
         else if (choice == 5) {
-
             sortByName();
             cout << "Sorted alphabetically!\n";
         }
 
+        // SORT DATE
         else if (choice == 6) {
-
             sortByReleaseDate();
             cout << "Sorted by release date!\n";
         }
 
+        // RESERVE
         else if (choice == 7) {
-
             reserveMovieSeats();
         }
 
     } while (choice != 0);
 }
-
-
-
 
 
 

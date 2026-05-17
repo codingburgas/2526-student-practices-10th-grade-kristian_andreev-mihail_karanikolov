@@ -27,6 +27,9 @@
     <ClCompile Include="TheatreSeatsReservation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AccountManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RelatedNewsHeader.h">
