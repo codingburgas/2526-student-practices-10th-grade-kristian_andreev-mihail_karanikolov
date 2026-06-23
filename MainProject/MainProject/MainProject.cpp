@@ -11,7 +11,28 @@ using namespace std;
 int main() {
     accManager.loadAccounts();
 
+    int choice;
+
+    cout << "1. Login\n";
+    cout << "2. Register\n";
+    cout << "Choice: ";
+    cin >> choice;
+    cin.ignore();
+
     string user, pass;
+
+    if (choice == 2) {
+
+        cout << "Choose Username: ";
+        getline(cin, user);
+
+        cout << "Choose Password: ";
+        getline(cin, pass);
+
+        accManager.registerAccount(user, pass);
+
+        return 0; // restart program and login
+    }
 
     cout << "Username: ";
     getline(cin, user);

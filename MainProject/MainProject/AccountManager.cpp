@@ -9,6 +9,30 @@ AccountManager::AccountManager() {
     currentUser = nullptr;
 }
 
+
+bool AccountManager::registerAccount(string username, string password) {
+
+    // Check if username already exists
+    for (auto& acc : accounts) {
+        if (acc.username == username) {
+            cout << "Username already exists!\n";
+            return false;
+        }
+    }
+
+    Account newAcc;
+    newAcc.username = username;
+    newAcc.password = password;
+    newAcc.rank = "user"; // default rank
+
+    accounts.push_back(newAcc);
+    saveAccounts();
+
+    cout << "Account created successfully!\n";
+    return true;
+}
+
+
 void AccountManager::loadAccounts() {
     ifstream file("accounts.txt");
     string line;

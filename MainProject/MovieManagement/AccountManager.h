@@ -23,6 +23,8 @@ public:
 
     bool login(const string& username, const string& password);
 
+    bool registerAccount(string username, string password);
+
     bool isAdmin() const;
     string getCurrentUsername() const;
     string getCurrentRank() const;
