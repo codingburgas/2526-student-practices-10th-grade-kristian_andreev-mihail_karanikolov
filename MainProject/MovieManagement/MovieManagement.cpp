@@ -8,6 +8,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include "raylib.h"
 
 
 using namespace std;
@@ -228,124 +229,210 @@ MOVIEINFO* findMovieByName(const string& name) {
 
 void movieMenu() {
 
-    int choice;
+    int choice = -1;
 
-    do {
+    Rectangle buttons[8];
 
-        accManager.displayUserBanner();
+    for (int i = 0; i < 8; i++)
+    {
+        buttons[i] =
+        {
+            440.0f,
+            150.0f + i * 65.0f,
+            400.0f,
+            50.0f
+        };
+    }
 
-        cout << "\n===== MOVIE MANAGEMENT =====\n";
-        cout << "1. Add Movie\n";
-        cout << "2. Display Movies\n";
-        cout << "3. Edit Movie\n";
-        cout << "4. Delete Movie\n";
-        cout << "5. Sort By Name\n";
-        cout << "6. Sort By Release Date\n";
-        cout << "7. Reserve Seats\n";
-        cout << "0. Exit\n";
 
-        cout << "Choice: ";
-        cin >> choice;
-        cin.ignore();
+    string options[8] =
+    {
+        "Add Movie",
+        "Display Movies",
+        "Edit Movie",
+        "Delete Movie",
+        "Sort By Name",
+        "Sort By Release Date",
+        "Reserve Seats",
+        "Exit"
+    };
 
-        // ADD MOVIE
-        if (choice == 1) {
 
-            if (!accManager.isAdmin()) {
-                cout << "Admin only.\n";
-                continue;
+    while (!WindowShouldClose())
+    {
+
+        Vector2 mouse = GetMousePosition();
+
+
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
+
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+
+        for (int i = 0; i < 8; i++)
+        {
+
+            bool hover =
+                CheckCollisionPointRec(
+                    mouse,
+                    buttons[i]
+                );
+
+
+            DrawRectangleRec(
+                buttons[i],
+                hover ? DARKGRAY : GRAY
+            );
+
+
+            DrawText(
+                options[i].c_str(),
+                buttons[i].x + 50,
+                buttons[i].y + 12,
+                25,
+                WHITE
+            );
+
+
+
+            if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                choice = i + 1;
             }
-
-            string name, lang, release, until;
-
-            cout << "Movie Name: ";
-            getline(cin, name);
-
-            cout << "Languages: ";
-            getline(cin, lang);
-
-            cout << "Release Date (YYYY-MM-DD): ";
-            getline(cin, release);
-
-            cout << "Streaming Until (YYYY-MM-DD): ";
-            getline(cin, until);
-
-            addNote(name, lang, release, until);
-
-            cout << "Movie added successfully!\n";
         }
 
-        // DISPLAY
-        else if (choice == 2) {
+
+        EndDrawing();
+
+
+
+        if (choice == 1)
+        {
+            // your existing add movie logic
+            string name;
+            string lang;
+            string release;
+            string until;
+
+
+            // later these become Raylib text boxes
+            cin >> name;
+            cin >> lang;
+            cin >> release;
+            cin >> until;
+
+
+            addNote(
+                name,
+                lang,
+                release,
+                until
+            );
+
+
+            choice = -1;
+        }
+
+
+
+        else if (choice == 2)
+        {
             display();
+
+            choice = -1;
         }
 
-        // EDIT MOVIE
-        else if (choice == 3) {
 
-            if (!accManager.isAdmin()) {
-                cout << "Admin only.\n";
-                continue;
-            }
 
+        else if (choice == 3)
+        {
             string name;
 
-            cout << "Enter movie name to edit: ";
-            getline(cin, name);
+            cin >> name;
 
-            MOVIEINFO* movie = findMovieByName(name);
 
-            if (movie) {
+            MOVIEINFO* movie =
+                findMovieByName(name);
+
+
+            if (movie)
                 updateNode(movie);
-                cout << "Movie updated!\n";
-            }
-            else {
-                cout << "Movie not found!\n";
-            }
+
+
+            choice = -1;
         }
 
-        // DELETE MOVIE
-        else if (choice == 4) {
 
-            if (!accManager.isAdmin()) {
-                cout << "Admin only.\n";
-                continue;
-            }
 
+        else if (choice == 4)
+        {
             string name;
 
-            cout << "Enter movie name to delete: ";
-            getline(cin, name);
+            cin >> name;
 
-            MOVIEINFO* movie = findMovieByName(name);
 
-            if (movie) {
+            MOVIEINFO* movie =
+                findMovieByName(name);
+
+
+            if (movie)
                 deleteNode(movie);
-                cout << "Movie deleted!\n";
-            }
-            else {
-                cout << "Movie not found!\n";
-            }
+
+
+            choice = -1;
         }
 
-        // SORT NAME
-        else if (choice == 5) {
+
+
+        else if (choice == 5)
+        {
             sortByName();
-            cout << "Sorted alphabetically!\n";
+            choice = -1;
         }
 
-        // SORT DATE
-        else if (choice == 6) {
+
+
+        else if (choice == 6)
+        {
             sortByReleaseDate();
-            cout << "Sorted by release date!\n";
+            choice = -1;
         }
 
-        // RESERVE
-        else if (choice == 7) {
+
+
+        else if (choice == 7)
+        {
             reserveMovieSeats();
+            choice = -1;
         }
 
-    } while (choice != 0);
+
+
+        else if (choice == 8)
+        {
+            return;
+        }
+
+    }
+
 }
 
 
