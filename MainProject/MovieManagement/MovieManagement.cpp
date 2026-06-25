@@ -45,14 +45,128 @@ void addNote(const string& name,
 
 // ================= DISPLAY =================
 void display() {
-    MOVIEINFO* temp = head;
-    while (temp) {
-        cout << "Name: " << temp->name
-            << " | Languages: " << temp->languages
-            << " | Release: " << temp->releaseDate
-            << " | Until: " << temp->streamingUntil << "\n";
-        temp = temp->next;
+    
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+        Rectangle backButton =
+        {
+            20.0f,
+            120.0f,
+            150.0f,
+            50.0f
+        };
+
+        bool backHover =
+            CheckCollisionPointRec(
+                mouse,
+                backButton
+            );
+
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        // Blue ribbon
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+        DrawText(
+            "Movies",
+            570,
+            130,
+            35,
+            BLACK
+        );
+
+        // Back button
+        DrawRectangleRec(
+            backButton,
+            backHover ? DARKGRAY : GRAY
+        );
+
+        DrawText(
+            "Back",
+            65,
+            135,
+            25,
+            WHITE
+        );
+
+        MOVIEINFO* temp = head;
+
+        int y = 200;
+
+        while (temp)
+        {
+            DrawRectangle(
+                250,
+                y,
+                780,
+                70,
+                LIGHTGRAY
+            );
+
+            DrawText(
+                ("Name: " + temp->name).c_str(),
+                270,
+                y + 10,
+                20,
+                BLACK
+            );
+
+            DrawText(
+                ("Languages: " + temp->languages).c_str(),
+                270,
+                y + 35,
+                20,
+                BLACK
+            );
+
+            DrawText(
+                ("Release: " + temp->releaseDate).c_str(),
+                650,
+                y + 10,
+                20,
+                BLACK
+            );
+
+            DrawText(
+                ("Until: " + temp->streamingUntil).c_str(),
+                650,
+                y + 35,
+                20,
+                BLACK
+            );
+
+            y += 90;
+
+            temp = temp->next;
+        }
+
+        EndDrawing();
+
+        if (backHover &&
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            return;
+        }
     }
+
 }
 
 // ================= SORTING =================
@@ -120,24 +234,384 @@ void currentlyStreaming() {
     }
 }
 
-// ================= MODIFY / DELETE =================
+//  MODIFY / DELETE 
 void updateNode(MOVIEINFO* node) {
 
-    if (!node) return;
+    if (!node)
+        return;
 
-    cout << "New name: ";
-    getline(cin, node->name);
 
-    cout << "New languages: ";
-    getline(cin, node->languages);
+    string newName = node->name;
+    string newLanguages = node->languages;
+    string newRelease = node->releaseDate;
+    string newUntil = node->streamingUntil;
 
-    cout << "New release date: ";
-    getline(cin, node->releaseDate);
 
-    cout << "New streaming until: ";
-    getline(cin, node->streamingUntil);
+    bool typingName = true;
+    bool typingLanguages = false;
+    bool typingRelease = false;
+    bool typingUntil = false;
 
-    rewriteMoviesFile();
+
+    Rectangle saveButton =
+    {
+        490.0f,
+        600.0f,
+        300.0f,
+        60.0f
+    };
+
+
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+
+        bool saveHover =
+            CheckCollisionPointRec(
+                mouse,
+                saveButton
+            );
+
+
+        int key = GetCharPressed();
+
+
+
+        // ================= NAME =================
+
+        if (typingName)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    newName += (char)key;
+
+                key = GetCharPressed();
+            }
+
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                newName.length() > 0)
+            {
+                newName.pop_back();
+            }
+
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingName = false;
+                typingLanguages = true;
+            }
+        }
+
+
+
+        // ================= LANGUAGES =================
+
+        else if (typingLanguages)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    newLanguages += (char)key;
+
+                key = GetCharPressed();
+            }
+
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                newLanguages.length() > 0)
+            {
+                newLanguages.pop_back();
+            }
+
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingLanguages = false;
+                typingRelease = true;
+            }
+        }
+
+
+
+
+        // ================= RELEASE =================
+
+        else if (typingRelease)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    newRelease += (char)key;
+
+                key = GetCharPressed();
+            }
+
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                newRelease.length() > 0)
+            {
+                newRelease.pop_back();
+            }
+
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingRelease = false;
+                typingUntil = true;
+            }
+        }
+
+
+
+
+        // ================= UNTIL =================
+
+        else if (typingUntil)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    newUntil += (char)key;
+
+                key = GetCharPressed();
+            }
+
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                newUntil.length() > 0)
+            {
+                newUntil.pop_back();
+            }
+        }
+
+
+
+
+
+        BeginDrawing();
+
+
+        ClearBackground(RAYWHITE);
+
+
+
+        // ribbon
+
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
+
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+
+
+
+        // panel
+
+        DrawRectangle(
+            300,
+            150,
+            680,
+            550,
+            LIGHTGRAY
+        );
+
+
+
+        DrawText(
+            "Edit Movie",
+            520,
+            180,
+            35,
+            BLACK
+        );
+
+
+
+        // Name
+
+        DrawText(
+            "Movie Name",
+            380,
+            240,
+            20,
+            DARKGRAY
+        );
+
+
+        DrawRectangle(
+            380,
+            270,
+            500,
+            45,
+            WHITE
+        );
+
+
+        DrawText(
+            newName.c_str(),
+            390,
+            280,
+            20,
+            BLACK
+        );
+
+
+
+
+
+        // Languages
+
+        DrawText(
+            "Languages",
+            380,
+            330,
+            20,
+            DARKGRAY
+        );
+
+
+        DrawRectangle(
+            380,
+            360,
+            500,
+            45,
+            WHITE
+        );
+
+
+        DrawText(
+            newLanguages.c_str(),
+            390,
+            370,
+            20,
+            BLACK
+        );
+
+
+
+
+
+        // Release
+
+        DrawText(
+            "Release Date",
+            380,
+            420,
+            20,
+            DARKGRAY
+        );
+
+
+        DrawRectangle(
+            380,
+            450,
+            500,
+            45,
+            WHITE
+        );
+
+
+        DrawText(
+            newRelease.c_str(),
+            390,
+            460,
+            20,
+            BLACK
+        );
+
+
+
+
+
+        // Until
+
+        DrawText(
+            "Streaming Until",
+            380,
+            510,
+            20,
+            DARKGRAY
+        );
+
+
+        DrawRectangle(
+            380,
+            540,
+            500,
+            45,
+            WHITE
+        );
+
+
+        DrawText(
+            newUntil.c_str(),
+            390,
+            550,
+            20,
+            BLACK
+        );
+
+
+
+
+        // save button
+
+        DrawRectangleRec(
+            saveButton,
+            saveHover ? DARKGRAY : GRAY
+        );
+
+
+        DrawText(
+            "SAVE",
+            saveButton.x +
+            (saveButton.width -
+                MeasureText("SAVE", 25)) / 2,
+            saveButton.y + 18,
+            25,
+            WHITE
+        );
+
+
+
+        EndDrawing();
+
+
+
+
+
+        if (saveHover &&
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+
+            node->name = newName;
+            node->languages = newLanguages;
+            node->releaseDate = newRelease;
+            node->streamingUntil = newUntil;
+
+
+            rewriteMoviesFile();
+
+
+            return;
+        }
+    }
+
 }
 
 void deleteNode(MOVIEINFO* current) {
@@ -226,6 +700,597 @@ MOVIEINFO* findMovieByName(const string& name) {
 
     return nullptr;
 }
+
+
+void AddMovie(int choice){
+
+    string name = "";
+    string lang = "";
+    string release = "";
+    string until = "";
+
+    bool typingName = true;
+    bool typingLang = false;
+    bool typingRelease = false;
+    bool typingUntil = false;
+
+    Rectangle addButton =
+    {
+        490.0f,
+        560.0f,
+        300.0f,
+        60.0f
+    };
+
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+        bool addHover =
+            CheckCollisionPointRec(
+                mouse,
+                addButton
+            );
+
+        int key = GetCharPressed();
+
+        if (typingName)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    name += (char)key;
+
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                !name.empty())
+            {
+                name.pop_back();
+            }
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingName = false;
+                typingLang = true;
+            }
+        }
+
+        else if (typingLang)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    lang += (char)key;
+
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                !lang.empty())
+            {
+                lang.pop_back();
+            }
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingLang = false;
+                typingRelease = true;
+            }
+        }
+
+        else if (typingRelease)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    release += (char)key;
+
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                !release.empty())
+            {
+                release.pop_back();
+            }
+
+            if (IsKeyPressed(KEY_ENTER))
+            {
+                typingRelease = false;
+                typingUntil = true;
+            }
+        }
+
+        else if (typingUntil)
+        {
+            while (key > 0)
+            {
+                if (key >= 32 && key <= 125)
+                    until += (char)key;
+
+                key = GetCharPressed();
+            }
+
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                !until.empty())
+            {
+                until.pop_back();
+            }
+        }
+
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+        DrawRectangle(
+            300,
+            150,
+            680,
+            500,
+            LIGHTGRAY
+        );
+
+        DrawText(
+            "Add Movie",
+            540,
+            180,
+            35,
+            BLACK
+        );
+
+        // Movie name
+        DrawText(
+            "Movie Name",
+            380,
+            240,
+            20,
+            DARKGRAY
+        );
+
+        DrawRectangle(
+            380,
+            270,
+            500,
+            45,
+            WHITE
+        );
+
+        DrawText(
+            name.c_str(),
+            390,
+            280,
+            20,
+            BLACK
+        );
+
+        // Languages
+        DrawText(
+            "Languages",
+            380,
+            330,
+            20,
+            DARKGRAY
+        );
+
+        DrawRectangle(
+            380,
+            360,
+            500,
+            45,
+            WHITE
+        );
+
+        DrawText(
+            lang.c_str(),
+            390,
+            370,
+            20,
+            BLACK
+        );
+
+        // Release Date
+        DrawText(
+            "Release Date",
+            380,
+            420,
+            20,
+            DARKGRAY
+        );
+
+        DrawRectangle(
+            380,
+            450,
+            500,
+            45,
+            WHITE
+        );
+
+        DrawText(
+            release.c_str(),
+            390,
+            460,
+            20,
+            BLACK
+        );
+
+        // Streaming Until
+        DrawText(
+            "Streaming Until",
+            380,
+            510,
+            20,
+            DARKGRAY
+        );
+
+        DrawRectangle(
+            380,
+            540,
+            500,
+            45,
+            WHITE
+        );
+
+        DrawText(
+            until.c_str(),
+            390,
+            550,
+            20,
+            BLACK
+        );
+
+        DrawRectangleRec(
+            addButton,
+            addHover ? DARKGRAY : GRAY
+        );
+
+        DrawText(
+            "ADD MOVIE",
+            addButton.x +
+            (addButton.width -
+                MeasureText("ADD MOVIE", 25)) / 2,
+            addButton.y + 18,
+            25,
+            WHITE
+        );
+
+        EndDrawing();
+
+        if (addHover &&
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            addNote(
+                name,
+                lang,
+                release,
+                until
+            );
+
+            return;
+        }
+    }
+
+}
+
+
+void EditMovie(int choice) {
+
+    string name = "";
+
+    Rectangle findButton =
+    {
+        490,
+        430,
+        300,
+        60
+    };
+
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+        bool findHover =
+            CheckCollisionPointRec(mouse, findButton);
+
+        int key = GetCharPressed();
+
+        while (key > 0)
+        {
+            if (key >= 32 && key <= 125)
+                name += (char)key;
+
+            key = GetCharPressed();
+        }
+
+        if (IsKeyPressed(KEY_BACKSPACE) &&
+            name.length() > 0)
+        {
+            name.pop_back();
+        }
+
+        BeginDrawing();
+
+        ClearBackground(RAYWHITE);
+
+        DrawRectangle(0, 0, 1280, 100, BLUE);
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+        DrawRectangle(
+            340,
+            180,
+            600,
+            300,
+            LIGHTGRAY
+        );
+
+        DrawText(
+            "Edit Movie",
+            540,
+            220,
+            35,
+            BLACK
+        );
+
+        DrawText(
+            "Movie Name",
+            440,
+            280,
+            20,
+            DARKGRAY
+        );
+
+        DrawRectangle(
+            440,
+            310,
+            400,
+            50,
+            WHITE
+        );
+
+        DrawText(
+            name.c_str(),
+            450,
+            325,
+            25,
+            BLACK
+        );
+
+        DrawRectangleRec(
+            findButton,
+            findHover ? DARKGRAY : GRAY
+        );
+
+        DrawText(
+            "FIND MOVIE",
+            findButton.x +
+            (findButton.width -
+                MeasureText("FIND MOVIE", 25)) / 2,
+            findButton.y + 18,
+            25,
+            WHITE
+        );
+
+        EndDrawing();
+
+        if (findHover &&
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            MOVIEINFO* movie =
+                findMovieByName(name);
+
+            if (movie)
+            {
+                updateNode(movie);
+                return;
+            }
+        }
+    }
+
+}
+
+void DeleteMovie(int choice) {
+
+    string name = "";
+
+    Rectangle deleteButton =
+    {
+        490.0f,
+        430.0f,
+        300.0f,
+        60.0f
+    };
+
+
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+
+        bool deleteHover =
+            CheckCollisionPointRec(
+                mouse,
+                deleteButton
+            );
+
+
+        int key = GetCharPressed();
+
+
+
+        while (key > 0)
+        {
+            if (key >= 32 && key <= 125)
+                name += (char)key;
+
+            key = GetCharPressed();
+        }
+
+
+
+        if (IsKeyPressed(KEY_BACKSPACE) &&
+            name.length() > 0)
+        {
+            name.pop_back();
+        }
+
+
+
+
+
+        BeginDrawing();
+
+
+        ClearBackground(RAYWHITE);
+
+
+
+        // top ribbon
+
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
+
+
+        DrawText(
+            "Cinesity",
+            1280 / 2 -
+            MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
+
+
+
+        // panel
+
+        DrawRectangle(
+            340,
+            180,
+            600,
+            300,
+            LIGHTGRAY
+        );
+
+
+
+        DrawText(
+            "Delete Movie",
+            510,
+            220,
+            35,
+            BLACK
+        );
+
+
+
+        DrawText(
+            "Movie Name",
+            440,
+            280,
+            20,
+            DARKGRAY
+        );
+
+
+
+        DrawRectangle(
+            440,
+            310,
+            400,
+            50,
+            WHITE
+        );
+
+
+        DrawText(
+            name.c_str(),
+            450,
+            325,
+            25,
+            BLACK
+        );
+
+
+
+
+        DrawRectangleRec(
+            deleteButton,
+            deleteHover ? DARKGRAY : GRAY
+        );
+
+
+        DrawText(
+            "DELETE",
+            deleteButton.x +
+            (deleteButton.width -
+                MeasureText("DELETE", 25)) / 2,
+            deleteButton.y + 18,
+            25,
+            WHITE
+        );
+
+
+
+        EndDrawing();
+
+
+
+
+
+        if (deleteHover &&
+            IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+
+            MOVIEINFO* movie =
+                findMovieByName(name);
+
+
+            if (movie)
+            {
+                deleteNode(movie);
+            }
+
+
+            return;
+        }
+    }
+
+    
+}
+
+
+
+
+
 
 void movieMenu() {
 
@@ -322,114 +1387,62 @@ void movieMenu() {
 
         EndDrawing();
 
+        switch (choice) {
+
+        case 1:
+            AddMovie(choice);
+            break;
 
 
-        if (choice == 1)
-        {
-            // your existing add movie logic
-            string name;
-            string lang;
-            string release;
-            string until;
-
-
-            // later these become Raylib text boxes
-            cin >> name;
-            cin >> lang;
-            cin >> release;
-            cin >> until;
-
-
-            addNote(
-                name,
-                lang,
-                release,
-                until
-            );
-
-
-            choice = -1;
-        }
-
-
-
-        else if (choice == 2)
-        {
+        case 2:
             display();
-
             choice = -1;
-        }
+            break;
+
+
+        case 3:
+            EditMovie(choice);
+            break;
 
 
 
-        else if (choice == 3)
-        {
-            string name;
-
-            cin >> name;
-
-
-            MOVIEINFO* movie =
-                findMovieByName(name);
+        case 4:
+        
+            DeleteMovie(choice);
+            break;
 
 
-            if (movie)
-                updateNode(movie);
+        case 5:
 
-
-            choice = -1;
-        }
-
-
-
-        else if (choice == 4)
-        {
-            string name;
-
-            cin >> name;
-
-
-            MOVIEINFO* movie =
-                findMovieByName(name);
-
-
-            if (movie)
-                deleteNode(movie);
-
-
-            choice = -1;
-        }
-
-
-
-        else if (choice == 5)
-        {
             sortByName();
             choice = -1;
-        }
+            break;
 
 
 
-        else if (choice == 6)
-        {
+        case 6:
+
             sortByReleaseDate();
             choice = -1;
-        }
+            break;
 
 
 
-        else if (choice == 7)
-        {
+        case 7:
+
             reserveMovieSeats();
             choice = -1;
-        }
+            break;
 
 
 
-        else if (choice == 8)
-        {
+        case 8:
             return;
+
+
         }
+
+        
 
     }
 
