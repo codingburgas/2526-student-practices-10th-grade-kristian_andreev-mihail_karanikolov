@@ -39,7 +39,7 @@ void TheatreSeatReservationFunc() {
 
         if (currentScreen == MENU) {
 
-            DrawText("MAIN MENU", 400, 200, 30, WHITE);
+            DrawText("Select Seats", 400, 200, 30, WHITE);
 
             DrawRectangleRec(openSeatsBtn, DARKBLUE);
             DrawText("SELECT SEATS", 410, 320, 20, WHITE);
@@ -130,6 +130,8 @@ void TheatreSeatReservationFunc() {
 
         EndDrawing();
     }
+
+    return;
 
     CloseWindow();
 

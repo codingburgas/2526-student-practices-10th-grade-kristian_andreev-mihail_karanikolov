@@ -440,26 +440,97 @@ void movieMenu() {
 
 void reserveMovieSeats() {
 
-    cout << "\n===== AVAILABLE MOVIES =====\n";
+    MOVIEINFO* selectedMovie = nullptr;
 
-    display();
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
 
-    string movieName;
+        BeginDrawing();
 
-    cout << "\nChoose movie: ";
-    getline(cin, movieName);
+        ClearBackground(RAYWHITE);
 
-    MOVIEINFO* movie = findMovieByName(movieName);
+        DrawRectangle(
+            0,
+            0,
+            1280,
+            100,
+            BLUE
+        );
 
-    if (!movie) {
+        DrawText(
+            "Cinesity",
+            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            30,
+            40,
+            WHITE
+        );
 
-        cout << "Movie not found!\n";
-        return;
+        DrawText(
+            "Select a Movie",
+            500,
+            130,
+            30,
+            BLACK
+        );
+
+        if (IsKeyPressed(KEY_TAB)) {
+
+            return;
+
+        }
+
+        MOVIEINFO* temp = head;
+
+        int y = 200;
+
+        while (temp)
+        {
+            Rectangle movieButton =
+            {
+                390.0f,
+                (float)y,
+                500.0f,
+                50.0f
+            };
+
+            bool hover =
+                CheckCollisionPointRec(
+                    mouse,
+                    movieButton
+                );
+
+            DrawRectangleRec(
+                movieButton,
+                hover ? DARKGRAY : GRAY
+            );
+
+            DrawText(
+                temp->name.c_str(),
+                420,
+                y + 12,
+                25,
+                WHITE
+            );
+
+            if (hover &&
+                IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+            {
+                selectedMovie = temp;
+            }
+
+            temp = temp->next;
+            y += 70;
+        }
+
+        EndDrawing();
+
+        if (selectedMovie)
+        {
+            TheatreSeatReservationFunc();
+            return;
+        }
     }
-
-    cout << "Opening reservation for: " << movie->name << endl;
-
-    TheatreSeatReservationFunc();
 }
 
 void saveMoviesToFile() {
