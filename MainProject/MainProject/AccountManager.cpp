@@ -23,7 +23,7 @@ bool AccountManager::registerAccount(string username, string password) {
     Account newAcc;
     newAcc.username = username;
     newAcc.password = password;
-    newAcc.rank = "user"; // default rank
+    newAcc.rank = "customer"; // customer rank, the admin rank is called "user" due to past versions of the code and already existing admin profiles
 
     accounts.push_back(newAcc);
     saveAccounts();

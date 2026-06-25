@@ -48,11 +48,13 @@ void LoginPage(string user, string pass) {
             CheckCollisionPointRec(mouse, loginButton);
 
 
+
         int key = GetCharPressed();
 
 
 
         // Username typing
+
         if (typingUser)
         {
             while (key > 0)
@@ -64,7 +66,8 @@ void LoginPage(string user, string pass) {
             }
 
 
-            if (IsKeyPressed(KEY_BACKSPACE) && user.length() > 0)
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                user.length() > 0)
             {
                 user.pop_back();
             }
@@ -79,7 +82,9 @@ void LoginPage(string user, string pass) {
 
 
 
+
         // Password typing
+
         if (typingPass)
         {
             while (key > 0)
@@ -91,7 +96,8 @@ void LoginPage(string user, string pass) {
             }
 
 
-            if (IsKeyPressed(KEY_BACKSPACE) && pass.length() > 0)
+            if (IsKeyPressed(KEY_BACKSPACE) &&
+                pass.length() > 0)
             {
                 pass.pop_back();
             }
@@ -99,6 +105,9 @@ void LoginPage(string user, string pass) {
 
 
 
+
+
+        // Login button
 
         if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)
             && loginHover)
@@ -108,38 +117,73 @@ void LoginPage(string user, string pass) {
             {
                 cout << "Invalid login!\n";
             }
+
+
             else
             {
-                accManager.displayUserBanner();
 
-                loadMoviesFromFile();
-                movieMenu();
-                freeList();
+               //checks if the account is admin, kept as user so the existing accounts remain valid
+
+                if (accManager.getCurrentRank() == "user")
+                {
+
+                    accManager.displayUserBanner();
+
+
+                    loadMoviesFromFile();
+
+                    movieMenu();
+
+                    freeList();
+
+                }
+
+
+
+                //checks if the account is a customer
+
+                else if (accManager.getCurrentRank() == "customer")
+                {
+
+                    cout << "CUSTOMER LOGIN SUCCESSFUL\n";
+                    cout << "Customer menu coming soon!\n";
+
+                }
+
+
             }
 
 
             return;
         }
 
-        if (IsKeyPressed(KEY_TAB)) {
-        
+
+
+
+
+        // Back
+
+        if (IsKeyPressed(KEY_TAB))
+        {
             return;
-        
         }
-        
-        
-        
-        
+
+
+
+
 
 
         BeginDrawing();
+
 
 
         ClearBackground(RAYWHITE);
 
 
 
+
         // blue ribbon
+
         DrawRectangle(
             0,
             0,
@@ -149,13 +193,18 @@ void LoginPage(string user, string pass) {
         );
 
 
+
         DrawText(
             "Cinesity",
-            1280 / 2 - MeasureText("Cinesity", 40) / 2,
+            1280 / 2 -
+            MeasureText("Cinesity", 40) / 2,
             30,
             40,
             WHITE
         );
+
+
+
 
 
 
@@ -165,6 +214,9 @@ void LoginPage(string user, string pass) {
             panel,
             LIGHTGRAY
         );
+
+
+
 
 
 
@@ -178,7 +230,12 @@ void LoginPage(string user, string pass) {
 
 
 
+
+
+
+
         // username box
+
 
         DrawRectangle(
             440,
@@ -189,6 +246,7 @@ void LoginPage(string user, string pass) {
         );
 
 
+
         DrawText(
             user.c_str(),
             450,
@@ -196,6 +254,7 @@ void LoginPage(string user, string pass) {
             25,
             BLACK
         );
+
 
 
         DrawText(
@@ -210,7 +269,11 @@ void LoginPage(string user, string pass) {
 
 
 
+
+
+
         // password box
+
 
         DrawRectangle(
             440,
@@ -221,7 +284,9 @@ void LoginPage(string user, string pass) {
         );
 
 
+
         string hiddenPass(pass.length(), '*');
+
 
 
         DrawText(
@@ -231,6 +296,7 @@ void LoginPage(string user, string pass) {
             25,
             BLACK
         );
+
 
 
         DrawText(
@@ -245,12 +311,16 @@ void LoginPage(string user, string pass) {
 
 
 
+
+
         // login button
+
 
         DrawRectangleRec(
             loginButton,
             loginHover ? DARKGRAY : GRAY
         );
+
 
 
         DrawText(
@@ -264,7 +334,10 @@ void LoginPage(string user, string pass) {
         );
 
 
+
+
         EndDrawing();
+
     }
 
 }
