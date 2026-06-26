@@ -1,6 +1,4 @@
 #include <iostream>
-#include "RelatedNewsHeader.h"
-#include "ScheduleProgrammeHeader.h"
 #include "MainHeader.h"
 #include "..\MovieManagement\MovieManagement.h"
 #include "TheatreSeatsReservationHeader.h"
@@ -190,19 +188,18 @@ int main()
 
 
         if (choice == 2)
+            if (choice == 1)
+            {
+                LoginPage(user, pass);
+                // do NOT reset choice
+            }
+
+        if (choice == 2)
         {
             RegisterPage(user, pass);
-
-            choice = 0; // <-- this sends you back to menu
+            // do NOT reset choice
         }
 
-
-        if (choice == 1)
-        {
-            LoginPage(user, pass);
-
-            choice = 0; // <-- this sends you back to menu
-        }
     }
 
 

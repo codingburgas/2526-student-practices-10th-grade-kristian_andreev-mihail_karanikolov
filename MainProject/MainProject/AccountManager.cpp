@@ -10,9 +10,40 @@ AccountManager::AccountManager() {
 }
 
 
+
 bool AccountManager::registerAccount(string username, string password) {
 
-    // Check if username already exists
+    // --- VALIDATION RULES ---
+    if (username.empty() || isBlank(username)) {
+        lastError = "Username cannot be empty!";
+        return false;
+    }
+
+    if (password.empty() || isBlank(password)) {
+        lastError = "Password cannot be empty!";
+        return false;
+    }
+
+
+    if (username.length() < 3) {
+        lastError = "Username must be at least 3 characters!";
+        return false;
+    }
+
+    if (password.length() < 3) {
+        lastError = "Password must be at least 3 characters!";
+        return false;
+    }
+
+    for (auto& acc : accounts) {
+        if (acc.username == username) {
+            lastError = "Username already exists!";
+            return false;
+        }
+    }
+
+
+    // --- CHECK FOR DUPLICATE USERNAME ---
     for (auto& acc : accounts) {
         if (acc.username == username) {
             cout << "Username already exists!\n";
@@ -20,10 +51,11 @@ bool AccountManager::registerAccount(string username, string password) {
         }
     }
 
+    // --- CREATE ACCOUNT ---
     Account newAcc;
     newAcc.username = username;
     newAcc.password = password;
-    newAcc.rank = "customer"; // customer rank, the admin rank is called "user" due to past versions of the code and already existing admin profiles
+    newAcc.rank = "customer";
 
     accounts.push_back(newAcc);
     saveAccounts();
@@ -33,23 +65,35 @@ bool AccountManager::registerAccount(string username, string password) {
 }
 
 
-void AccountManager::loadAccounts() {
+
+void AccountManager::loadAccounts()
+{
     ifstream file("accounts.txt");
     string line;
 
-    while (getline(file, line)) {
+    while (getline(file, line))
+    {
         stringstream ss(line);
 
         Account acc;
-
         getline(ss, acc.username, '|');
         getline(ss, acc.password, '|');
         getline(ss, acc.rank, '|');
 
-        accounts.push_back(acc);
-    }
+        bool exists = false;
 
-    file.close();
+        for (auto& a : accounts)
+        {
+            if (a.username == acc.username)
+            {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists)
+            accounts.push_back(acc);
+    }
 }
 
 void AccountManager::saveAccounts() {
@@ -75,7 +119,7 @@ bool AccountManager::login(const string& username, const string& password) {
 }
 
 bool AccountManager::isAdmin() const {
-    return currentUser && currentUser->rank == "admin";
+    return currentUser && (currentUser->rank == "admin" || currentUser->rank == "user");
 }
 
 string AccountManager::getCurrentUsername() const {

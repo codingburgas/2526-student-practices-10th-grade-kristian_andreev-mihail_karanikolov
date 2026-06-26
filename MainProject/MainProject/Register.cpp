@@ -1,18 +1,19 @@
 #include <iostream>
-#include "RelatedNewsHeader.h"
-#include "ScheduleProgrammeHeader.h"
 #include "MainHeader.h"
 #include "..\MovieManagement\MovieManagement.h"
 #include "TheatreSeatsReservationHeader.h"
-#include "..\MovieManagement\AccountManager.h"
 #include "raylib.h"
 #include <string>
 #include "RegisterHeader.h"
-
+#include "..\MovieManagement\AccountManager.h"
 
 using namespace std;
 
+static string errorMessage = "";
+
 void RegisterPage(string user, string pass) {
+
+
 
     Rectangle panel =
     {
@@ -37,10 +38,26 @@ void RegisterPage(string user, string pass) {
     user = "";
     pass = "";
 
+    Rectangle backButton =
+    {
+        20,
+        20,
+        120,
+        40
+    };
+
 
     while (!WindowShouldClose())
     {
         Vector2 mouse = GetMousePosition();
+
+
+        bool backHover = CheckCollisionPointRec(mouse, backButton);
+
+        if (backHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            return;
+        }
 
 
         bool registerHover =
@@ -68,9 +85,15 @@ void RegisterPage(string user, string pass) {
 
             if (IsKeyPressed(KEY_ENTER))
             {
-                typingUser = false;
-                typingPass = true;
+                if (user.empty() || isBlank(user)) {
+                    errorMessage = "Username cannot be empty!";
+                }
+                else {
+                    typingUser = false;
+                    typingPass = true;
+                }
             }
+
         }
 
 
@@ -92,17 +115,32 @@ void RegisterPage(string user, string pass) {
         }
 
 
-        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)
-            && registerHover)
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && registerHover)
         {
-            accManager.registerAccount(user, pass);
+            bool success = accManager.registerAccount(user, pass);
 
-            return;
+            if (success) {
+                accManager.loadAccounts();
+                loadMoviesFromFile();
+                CustomerMenu();
+                freeList();
+                return;
+            }
+            else {
+                errorMessage = accManager.getLastError();
+                typingUser = true;
+                typingPass = false;
+                pass = "";
+            }
         }
 
 
 
+
+
+
         BeginDrawing();
+
 
         ClearBackground(RAYWHITE);
 
@@ -125,6 +163,15 @@ void RegisterPage(string user, string pass) {
             WHITE
         );
 
+        DrawRectangleRec(backButton, backHover ? DARKGRAY : GRAY);
+
+        DrawText(
+            "Back",
+            backButton.x + 30,
+            backButton.y + 10,
+            20,
+            WHITE
+        );
 
         // panel
         DrawRectangleRec(
@@ -202,6 +249,8 @@ void RegisterPage(string user, string pass) {
 
 
 
+
+
         // register button
         DrawRectangleRec(
             registerButton,
@@ -218,6 +267,12 @@ void RegisterPage(string user, string pass) {
             25,
             WHITE
         );
+
+        if (!errorMessage.empty()) {
+            DrawText(errorMessage.c_str(), 450, 440, 20, RED);
+        }
+
+
 
 
         EndDrawing();

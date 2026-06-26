@@ -4,6 +4,13 @@
 
 using namespace std;
 
+inline bool isBlank(const string& s) {
+    for (char c : s) {
+        if (!isspace(c)) return false;
+    }
+    return true;
+}
+
 struct Account {
     string username;
     string password;
@@ -32,6 +39,10 @@ public:
     void displayUserBanner();
 
     bool addAccount(string username, string password, string rank);
+
+    string lastError = "";
+    string getLastError() const { return lastError; }
+
 
 };
 

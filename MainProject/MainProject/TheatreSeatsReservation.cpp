@@ -1,18 +1,28 @@
+﻿#include "..\MovieManagement\MovieManagement.h"
+#include "..\MovieManagement\AccountManager.h"
 #include <iostream>
 #include "TheatreSeatsReservationHeader.h"
 #include "raylib.h"
-#include "..\MovieManagement\MovieManagement.h"
+
 
 using namespace std;
 
-void TheatreSeatReservationFunc() {
+void TheatreSeatReservationFunc(const string& movieName)
+{
 
     const int rows = 10;
     const int cols = 15;
-    InitWindow(1000, 700, "Seat Selection");
-    SetTargetFPS(60);
 
     SEATDETAILS seats[rows][cols];
+    auto reserved = loadReservedSeats(movieName);
+
+    for (auto& seat : reserved)
+    {
+        int r = seat.first;
+        int c = seat.second;
+        seats[r][c].state = 2; // 2 = taken
+    }
+
 
     // Initialize seat data
     for (int r = 0; r < rows; r++) {
@@ -52,6 +62,17 @@ void TheatreSeatReservationFunc() {
         }
         else if (currentScreen == SEATS) {
 
+            Rectangle backButton = { 20, 20, 120, 40 };
+            bool backHover = CheckCollisionPointRec(mouse, backButton);
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && backHover)
+            {
+                EndDrawing();
+                return;
+            }
+
+            DrawRectangleRec(backButton, backHover ? DARKGRAY : GRAY);
+            DrawText("Back", 35, 30, 24, WHITE);
+
             DrawText("SELECT YOUR SEATS", 350, 30, 25, WHITE);
 
             // --- AUTO SCALE ---
@@ -87,18 +108,20 @@ void TheatreSeatReservationFunc() {
                     if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
                         CheckCollisionPointRec(mouse, seats[r][c].rect)) {
 
-                        if (seats[r][c].state == 0) {
-                            seats[r][c].state = 1;
-
-                            // debug print
-                            char rowLetter = 'A' + r;
-                            int seatNumber = c + 1;
-                            TraceLog(LOG_INFO, "Selected: %c%d", rowLetter, seatNumber);
-
+                        if (seats[r][c].state == 2)
+                        {
+                            // seat already taken → show error
+                            DrawText("Seat already reserved!", 400, 650, 20, RED);
                         }
-                        else if (seats[r][c].state == 1) {
+                        else if (seats[r][c].state == 0)
+                        {
+                            seats[r][c].state = 1;
+                        }
+                        else if (seats[r][c].state == 1)
+                        {
                             seats[r][c].state = 0;
                         }
+
                     }
                 }
             }
@@ -113,18 +136,22 @@ void TheatreSeatReservationFunc() {
             DrawText("CONFIRM", confirmBtn.x + 40, confirmBtn.y + 15, 20, WHITE);
 
             // --- CONFIRM LOGIC ---
-            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) &&
-                CheckCollisionPointRec(mouse, confirmBtn)) {
+            if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && CheckCollisionPointRec(mouse, confirmBtn)) {
 
-                for (int r = 0; r < rows; r++) {
-                    for (int c = 0; c < cols; c++) {
-                        if (seats[r][c].state == 1) {
+                string username = accManager.getCurrentUsername();
+
+                for (int r = 0; r < rows; r++)
+                {
+                    for (int c = 0; c < cols; c++)
+                    {
+                        if (seats[r][c].state == 1)
+                        {
                             seats[r][c].state = 2;
+                            saveSeatReservation(username, movieName, r, c);
                         }
                     }
                 }
 
-                currentScreen = MENU;
             }
         }
 
@@ -132,7 +159,5 @@ void TheatreSeatReservationFunc() {
     }
 
     return;
-
-    CloseWindow();
 
 }

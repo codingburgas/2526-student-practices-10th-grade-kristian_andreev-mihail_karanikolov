@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 #include <ctime>
 #include <cstdio>
@@ -22,6 +22,111 @@ MOVIEINFO* tail = nullptr;
 MOVIEINFO* createNode(const string& name, const string& languages, const string& releaseDate, const string& streamingUntil) {
     return new MOVIEINFO{ name, languages, releaseDate, streamingUntil, nullptr, nullptr };
 }
+
+void CustomerMenu()
+{
+    bool firstFrame = true;
+
+    while (!WindowShouldClose())
+    {
+        Vector2 mouse = GetMousePosition();
+
+        // raw click
+        bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
+
+        // ignore the click that brought us here
+        if (firstFrame)
+        {
+            click = false;
+            // once the button is released, we start accepting clicks
+            if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+                firstFrame = false;
+        }
+
+        // --- BUTTONS FOR SORTING ---
+        Rectangle sortAZ = { 100, 120, 200, 50 };
+        Rectangle sortZA = { 350, 120, 200, 50 };
+        Rectangle sortDate = { 600, 120, 250, 50 };
+
+        bool hoverAZ = CheckCollisionPointRec(mouse, sortAZ);
+        bool hoverZA = CheckCollisionPointRec(mouse, sortZA);
+        bool hoverDate = CheckCollisionPointRec(mouse, sortDate);
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawRectangle(0, 0, 1280, 100, BLUE);
+        DrawText("Cinesity", 1280 / 2 - MeasureText("Cinesity", 40) / 2, 30, 40, WHITE);
+        DrawText("Movies", 580, 70, 30, BLACK);
+
+        // sorting buttons
+        DrawRectangleRec(sortAZ, hoverAZ ? DARKGRAY : GRAY);
+        DrawText("Sort A - Z", sortAZ.x + 30, sortAZ.y + 15, 20, WHITE);
+
+        DrawRectangleRec(sortZA, hoverZA ? DARKGRAY : GRAY);
+        DrawText("Sort Z - A", sortZA.x + 30, sortZA.y + 15, 20, WHITE);
+
+        DrawRectangleRec(sortDate, hoverDate ? DARKGRAY : GRAY);
+        DrawText("Sort by Date", sortDate.x + 30, sortDate.y + 15, 20, WHITE);
+
+        // --- MOVIE LIST ---
+        MOVIEINFO* temp = head;
+        int y = 200;
+
+        while (temp)
+        {
+            Rectangle movieBox = { 250, (float)y, 780, 70 };
+            bool hoverMovie = CheckCollisionPointRec(mouse, movieBox);
+
+            if (hoverMovie)
+                DrawRectangleLinesEx(movieBox, 4, BLUE);
+
+            DrawRectangleRec(movieBox, LIGHTGRAY);
+
+            DrawText(("Name: " + temp->name).c_str(), 270, y + 10, 20, BLACK);
+            DrawText(("Languages: " + temp->languages).c_str(), 270, y + 35, 20, BLACK);
+            DrawText(("Release: " + temp->releaseDate).c_str(), 650, y + 10, 20, BLACK);
+            DrawText(("Until: " + temp->streamingUntil).c_str(), 650, y + 35, 20, BLACK);
+
+            // use `click` instead of IsMouseButtonPressed directly
+            if (hoverMovie && click)
+            {
+                TheatreSeatReservationFunc(temp->name);
+                EndDrawing();
+                return;
+            }
+
+            temp = temp->next;
+            y += 90;
+        }
+
+        EndDrawing();
+
+        // sorting logic (also use `click`)
+        if (hoverAZ && click)
+            sortByName();
+
+        if (hoverZA && click)
+        {
+            sortByName();
+            MOVIEINFO* cur = head;
+            MOVIEINFO* prev = nullptr;
+            while (cur)
+            {
+                MOVIEINFO* next = cur->next;
+                cur->next = prev;
+                cur->prev = next;
+                prev = cur;
+                cur = next;
+            }
+            head = prev;
+        }
+
+        if (hoverDate && click)
+            sortByReleaseDate();
+    }
+}
+
 
 
 void addNote(const string& name,
@@ -1292,160 +1397,107 @@ void DeleteMovie(int choice) {
 
 
 
-void movieMenu() {
+void movieMenu()
+{
+    bool isAdmin = (accManager.getCurrentRank() == "user");
+
+    // If customer → show movie list first
+    if (!isAdmin)
+    {
+        display();   // customer sees all movies first
+    }
 
     int choice = -1;
 
-    Rectangle buttons[8];
+    // Build menu options based on role
+    vector<string> options;
 
-    for (int i = 0; i < 8; i++)
+    if (isAdmin)
     {
-        buttons[i] =
+        options =
         {
-            440.0f,
-            150.0f + i * 65.0f,
-            400.0f,
-            50.0f
+            "Add Movie",
+            "Display Movies",
+            "Edit Movie",
+            "Delete Movie",
+            "Sort By Name",
+            "Sort By Release Date",
+            "Reserve Seats",
+            "Exit"
+        };
+    }
+    else
+    {
+        options =
+        {
+            "Display Movies",
+            "Sort By Name",
+            "Sort By Release Date",
+            "Reserve Seats",
+            "Exit"
         };
     }
 
-
-    string options[8] =
-    {
-        "Add Movie",
-        "Display Movies",
-        "Edit Movie",
-        "Delete Movie",
-        "Sort By Name",
-        "Sort By Release Date",
-        "Reserve Seats",
-        "Exit"
-    };
-
-
     while (!WindowShouldClose())
     {
-
         Vector2 mouse = GetMousePosition();
 
-
+        // Draw menu
         BeginDrawing();
-
         ClearBackground(RAYWHITE);
 
+        // Ribbon
+        DrawRectangle(0, 0, 1280, 100, BLUE);
+        DrawText("Cinesity", 1280 / 2 - MeasureText("Cinesity", 40) / 2, 30, 40, WHITE);
 
-        DrawRectangle(
-            0,
-            0,
-            1280,
-            100,
-            BLUE
-        );
+        // Draw buttons
+        int y = 150;
 
-
-        DrawText(
-            "Cinesity",
-            1280 / 2 - MeasureText("Cinesity", 40) / 2,
-            30,
-            40,
-            WHITE
-        );
-
-
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < options.size(); i++)
         {
+            Rectangle button = { 440, (float)y, 400, 50 };
+            bool hover = CheckCollisionPointRec(mouse, button);
 
-            bool hover =
-                CheckCollisionPointRec(
-                    mouse,
-                    buttons[i]
-                );
-
-
-            DrawRectangleRec(
-                buttons[i],
-                hover ? DARKGRAY : GRAY
-            );
-
-
-            DrawText(
-                options[i].c_str(),
-                buttons[i].x + 50,
-                buttons[i].y + 12,
-                25,
-                WHITE
-            );
-
-
+            DrawRectangleRec(button, hover ? DARKGRAY : GRAY);
+            DrawText(options[i].c_str(), button.x + 50, button.y + 12, 25, WHITE);
 
             if (hover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
-            {
                 choice = i + 1;
-            }
-        }
 
+            y += 65;
+        }
 
         EndDrawing();
 
-        switch (choice) {
-
-        case 1:
-            AddMovie(choice);
-            break;
-
-
-        case 2:
-            display();
-            choice = -1;
-            break;
-
-
-        case 3:
-            EditMovie(choice);
-            break;
-
-
-
-        case 4:
-        
-            DeleteMovie(choice);
-            break;
-
-
-        case 5:
-
-            sortByName();
-            choice = -1;
-            break;
-
-
-
-        case 6:
-
-            sortByReleaseDate();
-            choice = -1;
-            break;
-
-
-
-        case 7:
-
-            reserveMovieSeats();
-            choice = -1;
-            break;
-
-
-
-        case 8:
-            return;
-
-
+        // Handle choices
+        if (isAdmin)
+        {
+            switch (choice)
+            {
+            case 1: AddMovie(choice); break;
+            case 2: display(); break;
+            case 3: EditMovie(choice); break;
+            case 4: DeleteMovie(choice); break;
+            case 5: sortByName(); break;
+            case 6: sortByReleaseDate(); break;
+            case 7: reserveMovieSeats(); break;
+            case 8: return;
+            }
+        }
+        else
+        {
+            switch (choice)
+            {
+            case 1: display(); break;
+            case 2: sortByName(); break;
+            case 3: sortByReleaseDate(); break;
+            case 4: reserveMovieSeats(); break;
+            case 5: return;
+            }
         }
 
-        
-
+        choice = -1; // reset after handling
     }
-
 }
 
 
@@ -1540,7 +1592,8 @@ void reserveMovieSeats() {
 
         if (selectedMovie)
         {
-            TheatreSeatReservationFunc();
+            TheatreSeatReservationFunc(temp->name);
+
             return;
         }
     }
@@ -1641,4 +1694,41 @@ void loadMoviesFromFile() {
     }
 
     file.close();
+}
+
+void saveSeatReservation(const string& username, const string& movie, int row, int col)
+{
+    ofstream file("reservations.txt", ios::app);
+    file << username << "|" << movie << "|" << row << "|" << col << "\n";
+}
+
+vector<pair<int, int>> loadReservedSeats(const string& movieName)
+{
+    vector<pair<int, int>> reserved;
+    ifstream file("reservations.txt");
+    string line;
+
+    while (getline(file, line))
+    {
+        if (line.empty()) continue;
+
+        stringstream ss(line);
+        string username, mov, rowStr, colStr;
+
+        if (!getline(ss, username, '|')) continue;
+        if (!getline(ss, mov, '|')) continue;
+        if (!getline(ss, rowStr, '|')) continue;
+        if (!getline(ss, colStr, '|')) continue;
+
+        if (mov != movieName) continue;
+
+        try {
+            int row = stoi(rowStr);
+            int col = stoi(colStr);
+            reserved.push_back({ row, col });
+        }
+        catch (...) { continue; }
+    }
+
+    return reserved;
 }

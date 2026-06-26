@@ -1,3 +1,3 @@
 #pragma once
 
-void TheatreSeatReservationFunc();
+void TheatreSeatReservationFunc(const string& movieName);

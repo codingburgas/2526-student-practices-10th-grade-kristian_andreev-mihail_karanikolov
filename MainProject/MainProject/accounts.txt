@@ -4,3 +4,6 @@ miho|TRAW|user
 User|Taw|user
 Attempt|Attempt|user
 ||user
+asdasd|asdasd|customer
+adsasdasdasd|asdasdasd|customer
+mish|mish|customer

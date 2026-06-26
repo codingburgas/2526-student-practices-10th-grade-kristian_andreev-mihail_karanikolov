@@ -2,6 +2,8 @@
 #include <string>
 #include <ctime>
 #include <cstdio>
+#include <vector>
+#include <utility>
 #include "raylib.h"
 
 using namespace std;
@@ -60,10 +62,16 @@ void movieMenu();
 void reserveMovieSeats();
 
 
-void TheatreSeatReservationFunc();
+void TheatreSeatReservationFunc(const string& movieName);
 
 void saveMoviesToFile();
 
 void loadMoviesFromFile();
 
 void rewriteMoviesFile();
+
+void CustomerMenu();
+
+void saveSeatReservation(const string& username, const string& movie, int row, int col);
+
+vector<pair<int, int>> loadReservedSeats(const string& movie);

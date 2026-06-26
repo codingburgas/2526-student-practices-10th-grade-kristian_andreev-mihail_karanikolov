@@ -1,6 +1,4 @@
-#include <iostream>
-#include "RelatedNewsHeader.h"
-#include "ScheduleProgrammeHeader.h"
+﻿#include <iostream>
 #include "MainHeader.h"
 #include "..\MovieManagement\MovieManagement.h"
 #include "TheatreSeatsReservationHeader.h"
@@ -10,6 +8,7 @@
 #include "LoginHeader.h"
 
 using namespace std;
+
 
 void LoginPage(string user, string pass) {
 
@@ -42,6 +41,14 @@ void LoginPage(string user, string pass) {
     while (!WindowShouldClose())
     {
         Vector2 mouse = GetMousePosition();
+
+        Rectangle backButton = { 20, 20, 120, 40 };
+        bool backHover = CheckCollisionPointRec(mouse, backButton);
+
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && backHover)
+        {
+            return;
+        }
 
 
         bool loginHover =
@@ -117,43 +124,30 @@ void LoginPage(string user, string pass) {
             {
                 cout << "Invalid login!\n";
             }
-
-
             else
             {
+                loadMoviesFromFile();      // make sure movies are in memory
 
-               //checks if the account is admin, kept as user so the existing accounts remain valid
-
-                if (accManager.getCurrentRank() == "user")
+                // admin (rank "user" or "admin") → full menu
+                if (accManager.getCurrentRank() == "user" || accManager.getCurrentRank() == "admin")
                 {
-
-                    accManager.displayUserBanner();
-
-
-                    loadMoviesFromFile();
-
                     movieMenu();
-
                     freeList();
-
                 }
-
-
-
-                //checks if the account is a customer
-
+                // customer → limited menu, auto display + sort + reserve
                 else if (accManager.getCurrentRank() == "customer")
                 {
-
-                    cout << "CUSTOMER LOGIN SUCCESSFUL\n";
-                    cout << "Customer menu coming soon!\n";
-
+                    loadMoviesFromFile();
+                    CustomerMenu();
+                    freeList();
                 }
 
 
+                return;    // go back to main window loop after menu exits
             }
 
 
+
             return;
         }
 
@@ -161,12 +155,6 @@ void LoginPage(string user, string pass) {
 
 
 
-        // Back
-
-        if (IsKeyPressed(KEY_TAB))
-        {
-            return;
-        }
 
 
 
@@ -205,7 +193,8 @@ void LoginPage(string user, string pass) {
 
 
 
-
+        DrawRectangleRec(backButton, backHover ? DARKGRAY : GRAY);
+        DrawText("< Back", 35, 30, 24, WHITE);
 
 
         // panel
@@ -333,6 +322,8 @@ void LoginPage(string user, string pass) {
             WHITE
         );
 
+        DrawRectangleRec(backButton, backHover ? DARKGRAY : GRAY);
+        DrawText("Back", backButton.x + 30, backButton.y + 10, 20, WHITE);
 
 
 
