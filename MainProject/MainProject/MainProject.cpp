@@ -187,18 +187,18 @@ int main()
         }
 
 
-        if (choice == 2)
-            if (choice == 1)
-            {
-                LoginPage(user, pass);
-                // do NOT reset choice
-            }
+        if (choice == 1)
+        {
+            LoginPage(user, pass);
+            choice = 0;   // return to main menu after login page closes
+        }
 
         if (choice == 2)
         {
             RegisterPage(user, pass);
-            // do NOT reset choice
+            choice = 0;   // return to main menu after register page closes
         }
+
 
     }
 

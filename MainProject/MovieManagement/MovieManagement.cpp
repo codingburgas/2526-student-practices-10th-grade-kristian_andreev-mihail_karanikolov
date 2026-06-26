@@ -31,14 +31,10 @@ void CustomerMenu()
     {
         Vector2 mouse = GetMousePosition();
 
-        // raw click
         bool click = IsMouseButtonPressed(MOUSE_LEFT_BUTTON);
-
-        // ignore the click that brought us here
         if (firstFrame)
         {
             click = false;
-            // once the button is released, we start accepting clicks
             if (!IsMouseButtonDown(MOUSE_LEFT_BUTTON))
                 firstFrame = false;
         }
@@ -1401,15 +1397,13 @@ void movieMenu()
 {
     bool isAdmin = (accManager.getCurrentRank() == "user");
 
-    // If customer → show movie list first
     if (!isAdmin)
     {
-        display();   // customer sees all movies first
+        display(); 
     }
 
     int choice = -1;
 
-    // Build menu options based on role
     vector<string> options;
 
     if (isAdmin)

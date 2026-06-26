@@ -16,22 +16,22 @@ void TheatreSeatReservationFunc(const string& movieName)
     SEATDETAILS seats[rows][cols];
     auto reserved = loadReservedSeats(movieName);
 
-    for (auto& seat : reserved)
-    {
-        int r = seat.first;
-        int c = seat.second;
-        seats[r][c].state = 2; // 2 = taken
-    }
-
-
     // Initialize seat data
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
-            seats[r][c].state = 0;
+            seats[r][c].state = 0;   // default free
             seats[r][c].row = r;
             seats[r][c].col = c;
         }
     }
+
+    for (auto& seat : reserved)
+    {
+        int r = seat.first;
+        int c = seat.second;
+        seats[r][c].state = 2; // taken
+    }
+
 
     enum GameScreen { MENU, SEATS };
     GameScreen currentScreen = MENU;
@@ -64,11 +64,14 @@ void TheatreSeatReservationFunc(const string& movieName)
 
             Rectangle backButton = { 20, 20, 120, 40 };
             bool backHover = CheckCollisionPointRec(mouse, backButton);
+
             if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON) && backHover)
             {
                 EndDrawing();
+                CustomerMenu();   // ← send user back to customer menu
                 return;
             }
+
 
             DrawRectangleRec(backButton, backHover ? DARKGRAY : GRAY);
             DrawText("Back", 35, 30, 24, WHITE);
